@@ -1,0 +1,14 @@
+'use client';
+
+import { ChangeEvent, FormEvent, useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, UploadCloud } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import './admin.css';
+
+export default function AdminPage() {
+  const [audio, setAudio] = useState<File | null>(null); const [cover, setCover] = useState<File | null>(null); const [lrc, setLrc] = useState<File | null>(null); const [title, setTitle] = useState(''); const [artist, setArtist] = useState(''); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false);
+  const pick = (setter: (file: File | null) => void) => (e: ChangeEvent<HTMLInputElement>) => setter(e.target.files?.[0] || null);
+  async function submit(e: FormEvent) { e.preventDefault(); const client = supabase; if (!client || !audio || !title || !artist) { setMessage('กรุณาตั้งค่า Supabase และกรอกข้อมูลให้ครบ'); return; } setBusy(true); setMessage('กำลังอัปโหลด...'); try { const id = crypto.randomUUID(); const upload = async (bucket: string, file: File, ext: string) => { const path = `${id}.${ext}`; const result = await client.storage.from(bucket).upload(path, file, { upsert: true }); if (result.error) throw result.error; return client.storage.from(bucket).getPublicUrl(path).data.publicUrl; }; const url = await upload('audio', audio, 'mp3'); const cover_url = cover ? await upload('covers', cover, cover.name.split('.').pop() || 'jpg') : null; const lrc_url = lrc ? await upload('lyrics', lrc, 'lrc') : null; const result = await client.from('tracks').insert({ id, title, artist, url, cover_url, lrc_url }); if (result.error) throw result.error; setMessage('อัปโหลดสำเร็จแล้ว'); setTitle(''); setArtist(''); setAudio(null); setCover(null); setLrc(null); } catch (error) { setMessage(error instanceof Error ? error.message : 'อัปโหลดไม่สำเร็จ'); } finally { setBusy(false); } }
+  return <main className="admin-page"><Link href="/" className="back-link"><ArrowLeft size={17}/>กลับหน้าหลัก</Link><div className="admin-card"><div className="admin-heading"><UploadCloud size={25}/><div><p className="eyebrow">Library management</p><h1>เพิ่มเพลงเข้าคลัง</h1></div></div><form onSubmit={submit}><label>ชื่อเพลง<input value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="ชื่อเพลง"/></label><label>ศิลปิน<input value={artist} onChange={(e)=>setArtist(e.target.value)} placeholder="ชื่อศิลปิน"/></label><label>ไฟล์ MP3<input type="file" accept="audio/mpeg,.mp3" onChange={pick(setAudio)}/></label><label>รูปปก <span className="optional">(ไม่บังคับ)</span><input type="file" accept="image/*" onChange={pick(setCover)}/></label><label>เนื้อเพลง LRC <span className="optional">(ไม่บังคับ)</span><input type="file" accept=".lrc,text/plain" onChange={pick(setLrc)}/></label><button className="primary-button" disabled={busy}>{busy?'กำลังอัปโหลด...':'อัปโหลดเพลง'}</button>{message&&<p className="form-message">{message}</p>}</form></div></main>;
+}
