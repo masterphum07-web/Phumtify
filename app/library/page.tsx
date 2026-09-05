@@ -1,0 +1,29 @@
+'use client';
+
+import Link from 'next/link';
+import { Heart, Home, Library, ListMusic, Play, Search, Upload } from 'lucide-react';
+import type { Track } from '../../lib/player-store';
+import { usePlayerStore } from '../../lib/player-store';
+import { AudioEngine } from '../../components/audio-player';
+import './library.css';
+
+const demoUrl = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+const tracks: Track[] = [
+  { id: 'demo-trex', title: 'Demo Audio Test', artist: 'MDN CC0 Sample', url: demoUrl, color: 'from-violet-500 to-fuchsia-500' },
+  { id: 'demo-sunday', title: 'Sunday Morning', artist: 'Acoustic Collection', url: demoUrl, color: 'from-amber-400 to-orange-600' },
+  { id: 'demo-ocean', title: 'Ocean Lights', artist: 'Late Night Vibes', url: demoUrl, color: 'from-cyan-400 to-blue-700' },
+  { id: 'demo-afterglow', title: 'Afterglow', artist: 'Focus Room', url: demoUrl, color: 'from-emerald-400 to-teal-700' },
+];
+
+const cards = [
+  { title: 'เพลงที่ชอบ', subtitle: 'เพลงที่คุณกดถูกใจ', icon: '♥', color: 'from-pink-500 to-rose-700', tracks },
+  { title: 'เพลงที่เล่นล่าสุด', subtitle: 'กลับไปฟังต่อได้ทันที', icon: '◷', color: 'from-blue-500 to-indigo-700', tracks: tracks.slice(0, 3) },
+  { title: 'เพลงฟังตอนทำงาน', subtitle: 'เพลย์ลิสต์ของคุณ', icon: '♫', color: 'from-amber-400 to-orange-700', tracks: tracks.slice(1, 4) },
+];
+
+export default function LibraryPage() {
+  const playTrack = usePlayerStore((s) => s.playTrack);
+  const current = usePlayerStore((s) => s.currentTrack);
+  return <div className="app-shell"><AudioEngine /><aside className="sidebar"><div className="brand"><span className="brand-mark">♪</span><span>MySpotify</span></div><nav className="nav-group"><Link className="nav-link" href="/"><Home size={18} />หน้าหลัก</Link><button className="nav-link" type="button"><Search size={18} />ค้นหา</button><Link className="nav-link active" href="/library"><Library size={18} />คลังเพลง</Link></nav><div className="nav-section"><div className="section-label"><span>เพลย์ลิสต์</span><ListMusic size={15} /></div><button className="playlist-link" type="button" onClick={() => playTrack(tracks[0], tracks)}><Play size={14} />เพลงที่ชอบ</button><button className="playlist-link" type="button" onClick={() => playTrack(tracks[1], tracks)}>เพลงฟังตอนทำงาน</button></div><Link className="nav-link" href="/admin"><Upload size={18} />จัดการเพลง</Link></aside><main className="content-area"><header className="topbar"><div className="profile">คลังเพลงของฉัน <span className="avatar">P</span></div></header><section className="content-scroll"><p className="eyebrow">YOUR LIBRARY</p><h1 className="page-title">คลังเพลง</h1><p className="hero-copy">รวมเพลงและเพลย์ลิสต์ทั้งหมดของคุณไว้ในที่เดียว</p><div className="library-cards">{cards.map((card) => <button type="button" className="library-card" key={card.title} onClick={() => playTrack(card.tracks[0], card.tracks)}><div className={`library-card-icon bg-gradient-to-br ${card.color}`}>{card.icon}</div><div><h2>{card.title}</h2><p>{card.subtitle}</p><span>{card.tracks.length} เพลง</span></div><Play size={20} /></button>)}</div><div className="section-heading"><div><p className="eyebrow">ALL TRACKS</p><h2>เพลงทั้งหมด</h2></div><button className="text-button" type="button" onClick={() => playTrack(tracks[0], tracks)}>เล่นทั้งหมด</button></div><div className="library-list">{tracks.map((track, index) => <button type="button" className={`library-row ${current?.id === track.id ? 'selected' : ''}`} key={track.id} onClick={() => playTrack(track, tracks)}><span>{index + 1}</span><span className={`mini-cover bg-gradient-to-br ${track.color}`}>♪</span><span className="library-row-info"><strong>{track.title}</strong><small>{track.artist}</small></span><Heart size={16} /></button>)}</div></section></main></div>;
+}
+
