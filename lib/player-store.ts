@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type RepeatMode = 'off' | 'all' | 'one';
-export type Track = { id: string; title: string; artist: string; album?: string; url: string; coverUrl?: string; lrcUrl?: string; duration?: number };
+export type Track = { id: string; title: string; artist: string; album?: string; url: string; coverUrl?: string; lrcUrl?: string; duration?: number; color?: string };
 
 type PlayerState = {
   currentTrack: Track | null; queue: Track[]; queueIndex: number; isPlaying: boolean; volume: number; isShuffle: boolean; repeatMode: RepeatMode; currentTime: number; duration: number;
@@ -18,3 +18,4 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   previous: () => set((state) => { if (!state.queue.length) return state; const index = state.queueIndex <= 0 ? state.queue.length - 1 : state.queueIndex - 1; return { ...state, queueIndex: index, currentTrack: state.queue[index], isPlaying: true, currentTime: 0 }; }),
   seek: (time) => set({ currentTime: time }), setVolume: (value) => set({ volume: Math.max(0, Math.min(1, value)) }), toggleShuffle: () => set((state) => ({ isShuffle: !state.isShuffle })), cycleRepeat: () => set((state) => ({ repeatMode: state.repeatMode === 'off' ? 'all' : state.repeatMode === 'all' ? 'one' : 'off' })), setProgress: (currentTime, duration) => set({ currentTime, duration }),
 }));
+
