@@ -1,32 +1,61 @@
 'use client';
 
-import { Home, Library, ListMusic, Search, Settings, Upload, Play, Heart, Plus, ChevronLeft, ChevronRight, Volume2, Shuffle, Repeat2, SkipBack, SkipForward } from 'lucide-react';
 import Link from 'next/link';
-import { usePlayerStore } from '@/lib/player-store';
+import { useMemo } from 'react';
+import { ChevronLeft, ChevronRight, Heart, Home as HomeIcon, Library, ListMusic, MoreHorizontal, Pause, Play, Repeat, Search, Shuffle, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import type { Track } from '../lib/player-store';
+import { usePlayerStore } from '../lib/player-store';
+import { AudioEngine } from '../components/audio-player';
 
-const tracks = [
-  { id: 'demo-trex', title: 'Demo Audio Test', artist: 'MDN CC0 Sample', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3', color: 'from-violet-500 to-fuchsia-500' },
-  { id: 'demo-sunday', title: 'Sunday Morning', artist: 'Acoustic Collection', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3', color: 'from-amber-400 to-orange-600' },
-  { id: 'demo-ocean', title: 'Ocean Lights', artist: 'Late Night Vibes', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3', color: 'from-cyan-400 to-blue-700' },
-  { id: 'demo-afterglow', title: 'Afterglow', artist: 'Focus Room', url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3', color: 'from-emerald-400 to-teal-700' },
+const demoUrl = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
+const tracks: Track[] = [
+  { id: 'demo-trex', title: 'Demo Audio Test', artist: 'MDN CC0 Sample', url: demoUrl, color: 'from-violet-500 to-fuchsia-500' },
+  { id: 'demo-sunday', title: 'Sunday Morning', artist: 'Acoustic Collection', url: demoUrl, color: 'from-amber-400 to-orange-600' },
+  { id: 'demo-ocean', title: 'Ocean Lights', artist: 'Late Night Vibes', url: demoUrl, color: 'from-cyan-400 to-blue-700' },
+  { id: 'demo-afterglow', title: 'Afterglow', artist: 'Focus Room', url: demoUrl, color: 'from-emerald-400 to-teal-700' },
 ];
 
-export default function HomePage() {
-  const playTrack = usePlayerStore((state) => state.playTrack);
-  return <main className="app-shell">
+const formatTime = (value: number) => `${Math.floor(value / 60)}:${String(Math.floor(value % 60)).padStart(2, '0')}`;
+
+export default function Home() {
+  const currentTrack = usePlayerStore((s) => s.currentTrack);
+  const isPlaying = usePlayerStore((s) => s.isPlaying);
+  const isShuffle = usePlayerStore((s) => s.isShuffle);
+  const repeatMode = usePlayerStore((s) => s.repeatMode);
+  const currentTime = usePlayerStore((s) => s.currentTime);
+  const duration = usePlayerStore((s) => s.duration);
+  const volume = usePlayerStore((s) => s.volume);
+  const playTrack = usePlayerStore((s) => s.playTrack);
+  const togglePlay = usePlayerStore((s) => s.togglePlay);
+  const next = usePlayerStore((s) => s.next);
+  const previous = usePlayerStore((s) => s.previous);
+  const seek = usePlayerStore((s) => s.seek);
+  const setVolume = usePlayerStore((s) => s.setVolume);
+  const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+  const cycleRepeat = usePlayerStore((s) => s.cycleRepeat);
+  const progress = useMemo(() => duration > 0 ? (currentTime / duration) * 100 : 0, [currentTime, duration]);
+
+  return <div className="app-shell">
+    <AudioEngine />
     <aside className="sidebar">
-      <div className="brand"><span className="brand-mark">♪</span> MySpotify</div>
-      <nav className="nav-group"><a className="nav-link active"><Home size={19} />หน้าหลัก</a><a className="nav-link"><Search size={19} />ค้นหา</a><a className="nav-link"><Library size={19} />คลังเพลง</a></nav>
-      <div className="nav-section"><div className="section-label">เพลย์ลิสต์ของคุณ <Plus size={16} /></div><a className="playlist-link"><ListMusic size={17} />เพลงที่ชอบ</a><a className="playlist-link">เพลงฟังตอนทำงาน</a><a className="playlist-link">เพลงโปรดของฉัน</a></div>
-      <div className="sidebar-bottom"><Link href="/admin" className="nav-link"><Upload size={18} />จัดการเพลง</Link><a className="nav-link"><Settings size={18} />ตั้งค่า</a></div>
+      <div className="brand"><span className="brand-mark">♪</span><span>MySpotify</span></div>
+      <nav className="nav-group">
+        <Link className="nav-link active" href="/"><HomeIcon size={18} />หน้าหลัก</Link>
+        <button className="nav-link" type="button" onClick={() => document.getElementById('search')?.focus()}><Search size={18} />ค้นหา</button>
+        <Link className="nav-link" href="#library"><Library size={18} />คลังเพลง</Link>
+      </nav>
+      <div className="nav-section"><div className="section-label"><span>เพลย์ลิสต์</span><ListMusic size={15} /></div><button className="playlist-link" type="button" onClick={() => playTrack(tracks[0], tracks)}><Play size={14} />ทดลองฟัง</button></div>
+      <Link className="nav-link" href="/admin"><ListMusic size={18} />จัดการเพลง</Link>
     </aside>
-    <section className="content-area">
-      <header className="topbar"><div className="history"><button><ChevronLeft size={20}/></button><button><ChevronRight size={20}/></button></div><div className="profile">ผู้ใช้ของฉัน <span className="avatar">P</span></div></header>
-      <div className="content-scroll"><section className="hero"><div><p className="eyebrow">คลังเพลงส่วนตัวของคุณ</p><h1>ฟังเพลงที่คุณรัก<br/><span>ในแบบของคุณ</span></h1><p className="hero-copy">เพลงทั้งหมดของคุณ อยู่ในที่เดียว พร้อมฟังได้ทุกเวลา</p><button className="primary-button"><Play size={18} fill="currentColor"/>เริ่มฟังเพลง</button></div><div className="hero-orb" /></section>
-        <section className="section-block"><div className="section-heading"><div><p className="eyebrow">คัดสรรมาให้คุณ</p><h2>เพลงที่น่าฟังวันนี้</h2></div><button className="text-button">ดูทั้งหมด</button></div><div className="track-grid">{tracks.map((track) => <article className="track-card" key={track.title} onClick={() => playTrack(track, tracks)}><div className={`cover-art ${track.color}`}><span>♪</span><button className="card-play" aria-label={`เล่น ${track.title}`}><Play size={17} fill="currentColor"/></button></div><h3>{track.title}</h3><p>{track.artist}</p></article>)}</div></section>
-      </div>
-    </section>
-    <footer className="player"><div className="now-playing"><div className="mini-cover from-violet-500 to-fuchsia-500">♪</div><div><strong>ยังไม่มีเพลงที่เล่น</strong><span>เลือกเพลงเพื่อเริ่มฟัง</span></div><Heart size={17}/></div><div className="player-controls"><div className="control-row"><button><Shuffle size={16}/></button><button><SkipBack size={18} fill="currentColor"/></button><button className="play-button"><Play size={19} fill="currentColor"/></button><button><SkipForward size={18} fill="currentColor"/></button><button><Repeat2 size={16}/></button></div><div className="progress"><span>0:00</span><div className="progress-track"><div /></div><span>0:00</span></div></div><div className="volume"><Volume2 size={18}/><div className="volume-track"><div /></div></div></footer>
-  </main>;
+    <main className="content-area">
+      <header className="topbar"><div className="history"><button type="button" aria-label="ย้อนกลับ"><ChevronLeft size={18} /></button><button type="button" aria-label="ไปข้างหน้า"><ChevronRight size={18} /></button></div><input id="search" className="search-input" placeholder="ค้นหาเพลง ศิลปิน หรืออัลบั้ม" /><div className="profile"><span>ผู้ฟังส่วนตัว</span><span className="avatar">P</span></div></header>
+      <section className="content-scroll" id="library">
+        <div className="hero"><div><p className="eyebrow">PERSONAL MUSIC SPACE</p><h1>เพลงของคุณ<br /><span>เล่นได้ทุกที่</span></h1><p className="hero-copy">คลังเพลงส่วนตัว ไม่มีโฆษณา พร้อมเล่นต่อเนื่องแม้ล็อกหน้าจอ</p><button className="primary-button" type="button" onClick={() => playTrack(tracks[0], tracks)}><Play size={16} fill="currentColor" />เริ่มฟังเพลง</button></div><div className="hero-orb">♫</div></div>
+        <div className="section-heading"><div><p className="eyebrow">QUICK PICKS</p><h2>เพลงแนะนำ</h2></div><button type="button" className="text-button" onClick={() => playTrack(tracks[0], tracks)}>เล่นทั้งหมด</button></div>
+        <div className="track-grid">{tracks.map((track) => <article className={`track-card ${currentTrack?.id === track.id ? 'selected' : ''}`} key={track.id} onClick={() => playTrack(track, tracks)}><div className={`cover-art bg-gradient-to-br ${track.color}`}><span>♪</span><button type="button" aria-label={`เล่น ${track.title}`} onClick={(e) => { e.stopPropagation(); playTrack(track, tracks); }}><Play size={18} fill="currentColor" /></button></div><h3>{track.title}</h3><p>{track.artist}</p></article>)}</div>
+      </section>
+    </main>
+    <footer className="player"><div className="now-playing">{currentTrack ? <div className={`mini-cover bg-gradient-to-br ${currentTrack.color ?? 'from-violet-500 to-fuchsia-500'}`}>♪</div> : <div className="mini-cover">♪</div>}<div><strong>{currentTrack?.title ?? 'ยังไม่มีเพลงที่เล่น'}</strong><span>{currentTrack?.artist ?? 'เลือกเพลงเพื่อเริ่มฟัง'}</span></div><Heart size={16} /></div><div className="player-controls"><div className="control-row"><button type="button" aria-label="สุ่มเพลง" className={isShuffle ? 'active-control' : ''} onClick={toggleShuffle}><Shuffle size={16} /></button><button type="button" aria-label="เพลงก่อนหน้า" onClick={previous} disabled={!currentTrack}><SkipBack size={18} /></button><button type="button" className="play-button" aria-label={isPlaying ? 'หยุดชั่วคราว' : 'เล่นเพลง'} onClick={togglePlay} disabled={!currentTrack}>{isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}</button><button type="button" aria-label="เพลงถัดไป" onClick={next} disabled={!currentTrack}><SkipForward size={18} /></button><button type="button" aria-label="วนซ้ำ" className={repeatMode !== 'off' ? 'active-control' : ''} onClick={cycleRepeat}><Repeat size={16} /></button></div><div className="progress"><span>{formatTime(currentTime)}</span><input className="progress-range" type="range" min="0" max={duration || 0.1} step="0.1" value={Math.min(currentTime, duration || 0.1)} onChange={(e) => seek(Number(e.target.value))} style={{ '--progress': `${progress}%` } as React.CSSProperties} aria-label="ตำแหน่งเพลง" /><span>{formatTime(duration)}</span></div></div><div className="volume"><Volume2 size={16} /><input className="volume-range" type="range" min="0" max="1" step="0.01" value={volume} onChange={(e) => setVolume(Number(e.target.value))} aria-label="ระดับเสียง" /><MoreHorizontal size={18} /></div></footer>
+  </div>;
 }
 
