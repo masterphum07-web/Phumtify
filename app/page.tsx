@@ -42,7 +42,7 @@ export default function Home() {
       <nav className="nav-group">
         <Link className="nav-link active" href="/"><HomeIcon size={18} />หน้าหลัก</Link>
         <button className="nav-link" type="button" onClick={() => document.getElementById('search')?.focus()}><Search size={18} />ค้นหา</button>
-        <Link className="nav-link" href="#library"><Library size={18} />คลังเพลง</Link>
+        <Link className="nav-link" href="/library"><Library size={18} />คลังเพลง</Link>
       </nav>
       <div className="nav-section"><div className="section-label"><span>เพลย์ลิสต์</span><ListMusic size={15} /></div><button className="playlist-link" type="button" onClick={() => playTrack(tracks[0], tracks)}><Play size={14} />ทดลองฟัง</button></div>
       <Link className="nav-link" href="/admin"><ListMusic size={18} />จัดการเพลง</Link>
