@@ -1,0 +1,12 @@
+{
+  "name": "Phumtify",
+  "short_name": "Phumtify",
+  "description": "Personal self-hosted music library",
+  "start_url": "/Phumtify/",
+  "display": "standalone",
+  "background_color": "#08090d",
+  "theme_color": "#a78bfa",
+  "icons": []
+}
+
+

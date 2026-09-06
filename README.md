@@ -1,4 +1,4 @@
-# MySpotify / Phumtify
+# Phumtify / Phumtify
 
 Self-hosted personal music web app built with Next.js, TypeScript, Tailwind CSS, Zustand, and Supabase.
 
@@ -10,3 +10,5 @@ pnpm dev
 ```
 
 Supabase configuration will be added in the database phase. Never commit real keys; use `.env.local`.
+
+
