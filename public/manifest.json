@@ -1,6 +1,6 @@
 {
-  "name": "MySpotify",
-  "short_name": "MySpotify",
+  "name": "Phumtify",
+  "short_name": "Phumtify",
   "description": "Personal self-hosted music library",
   "start_url": "/Phumtify/",
   "display": "standalone",
@@ -8,3 +8,6 @@
   "theme_color": "#a78bfa",
   "icons": []
 }
+
+
+
