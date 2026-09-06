@@ -1,0 +1,12 @@
+'use client';
+import Link from 'next/link';
+import { BarChart3, Clock3, Home, Library, Play, TrendingUp } from 'lucide-react';
+import { usePlayerStore } from '../../lib/player-store';
+
+export default function StatsPage(){
+  const counts=usePlayerStore(s=>s.playCounts); const seconds=usePlayerStore(s=>s.listenSeconds); const recent=usePlayerStore(s=>s.recentIds);
+  const totalPlays=Object.values(counts).reduce((a,b)=>a+b,0); const totalSeconds=Object.values(seconds).reduce((a,b)=>a+b,0);
+  const format=(n:number)=>n<60?`${Math.round(n)} วินาที`:`${Math.floor(n/3600)} ชม. ${Math.floor(n%3600/60)} นาที`;
+  const rows=recent.map(id=>({id,plays:counts[id]||0,time:seconds[id]||0})).sort((a,b)=>b.plays-a.plays);
+  return <div className="app-shell"><aside className="sidebar"><div className="brand"><span className="brand-mark">♫</span><span>Phumtify</span></div><nav className="nav-group"><Link className="nav-link" href="/"><Home size={20}/><span>หน้าหลัก</span></Link><Link className="nav-link" href="/library"><Library size={20}/><span>คลังเพลง</span></Link><Link className="nav-link" href="/player"><Play size={20}/><span>กำลังเล่น</span></Link><Link className="nav-link active" href="/stats"><BarChart3 size={20}/><span>สถิติ</span></Link></nav></aside><main className="content-area"><section className="content-scroll"><p className="eyebrow">YOUR LISTENING</p><h1 className="page-title">สถิติการฟัง</h1><p className="hero-copy">ดูพฤติกรรมการฟังเพลงของคุณแบบส่วนตัว ข้อมูลเก็บไว้ในเครื่องนี้</p><div className="stats-grid"><div className="stat-card"><Play size={20}/><strong>{totalPlays}</strong><span>ครั้งที่เปิดเพลง</span></div><div className="stat-card"><Clock3 size={20}/><strong>{format(totalSeconds)}</strong><span>เวลาที่ฟังรวม</span></div><div className="stat-card"><TrendingUp size={20}/><strong>{rows.length}</strong><span>เพลงที่เคยฟัง</span></div></div><section className="analytics-card stats-list"><div className="analytics-title"><div><p className="eyebrow">TOP TRACKS</p><h2>เพลงที่ฟังบ่อยที่สุด</h2></div><BarChart3 size={20}/></div>{rows.length?rows.map((row,i)=><div className="bar-row" key={row.id}><span>#{i+1} เพลง {row.id.slice(0,8)}</span><div><i style={{width:`${Math.max(8,(row.plays/(rows[0].plays||1))*100)}%`}}/></div><b>{row.plays} ครั้ง</b></div>):<p className="form-message">เริ่มเปิดเพลง แล้วสถิติจะปรากฏที่นี่</p>}<p className="analytics-note">สถิติจะถูกเก็บแบบสรุป ไม่บันทึกไฟล์เสียงซ้ำ จึงใช้พื้นที่น้อยมาก</p></section></section></main></div>;
+}
