@@ -36,3 +36,18 @@ create policy "public read tracks" on public.tracks for select using (true);
 create policy "public read playlists" on public.playlists for select using (true);
 create policy "public read playlist tracks" on public.playlist_tracks for select using (true);
 
+create policy "public insert tracks" on public.tracks for insert with check (true);
+
+insert into storage.buckets (id, name, public)
+values ('audio', 'audio', true), ('covers', 'covers', true), ('lyrics', 'lyrics', true)
+on conflict (id) do update set public = true;
+
+create policy "public read music files" on storage.objects for select
+using (bucket_id in ('audio', 'covers', 'lyrics'));
+
+create policy "public upload music files" on storage.objects for insert
+with check (bucket_id in ('audio', 'covers', 'lyrics'));
+
+create policy "public update music files" on storage.objects for update
+using (bucket_id in ('audio', 'covers', 'lyrics'));
+
