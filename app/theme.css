@@ -24,3 +24,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #c4b5
 .now-playing{text-decoration:none;color:inherit;cursor:pointer;transition:transform .18s,opacity .18s}.now-playing:hover{opacity:.88;transform:translateY(-1px)}
 
 
+
+.hero>div:first-child{position:relative;z-index:2}.hero-orb{z-index:0;pointer-events:none}.hero-copy{max-width:520px;line-height:1.65}.player{isolation:isolate}.player::after{content:'';position:absolute;inset:0;z-index:-1;background:#0f1016eF}.now-playing,.player-controls,.volume{position:relative;z-index:1}
+@media(max-width:620px){.hero{background:linear-gradient(110deg,#171326,#11121aeF 68%,#1b1430)}.hero-orb{opacity:.42}.player{border-radius:14px 14px 0 0;box-shadow:0 -10px 35px #0008}.content-scroll{padding-bottom:245px}}
+
+
