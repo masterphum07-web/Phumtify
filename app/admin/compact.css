@@ -1,1 +1,2 @@
 .admin-list .admin-track:nth-of-type(n+5){display:none}
+.admin-actions a[href="/library"]{font-size:0;background:#8b5cf6;border-color:#a78bfa;color:#fff}.admin-actions a[href="/library"]::after{content:'ดูเพลงทั้งหมด';font-size:12px}
