@@ -20,6 +20,7 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://ayphtrqklyfdxfswgibc.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_VuRb2e2aVwkJyMU6XUdn1A_t0FGfZVx
+      NEXT_PUBLIC_YOUTUBE_API_KEY: ${{ secrets.NEXT_PUBLIC_YOUTUBE_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
