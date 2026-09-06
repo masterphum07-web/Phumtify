@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Heart, Home as HomeIcon, Library, ListMusic, MoreHorizontal, Pause, Play, Repeat, Search, Shuffle, SkipBack, SkipForward, Volume2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Home as HomeIcon, Library, Youtube, ListMusic, MoreHorizontal, Pause, Play, Repeat, Search, Shuffle, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import type { Track } from '../lib/player-store';
 import { usePlayerStore } from '../lib/player-store';
 import { supabase } from '../lib/supabase';
@@ -44,7 +44,7 @@ export default function Home() {
       <nav className="nav-group">
         <Link className="nav-link active" href="/"><HomeIcon size={20} /><span>หน้าหลัก</span></Link>
         <button className="nav-link" type="button" onClick={() => document.getElementById('search')?.focus()}><Search size={20} /><span>ค้นหา</span></button>
-        <Link className="nav-link" href="/library"><Library size={20} /><span>คลังเพลง</span></Link><Link className="nav-link" href="/player"><Play size={20} /><span>กำลังเล่น</span></Link>
+        <Link className="nav-link" href="/youtube"><Youtube size={20} /><span>YouTube</span></Link><Link className="nav-link" href="/library"><Library size={20} /><span>คลังเพลง</span></Link><Link className="nav-link" href="/player"><Play size={20} /><span>กำลังเล่น</span></Link>
       </nav>
       <div className="nav-section"><div className="section-label"><span>เพลย์ลิสต์</span><ListMusic size={15} /></div><button className="playlist-link" type="button" onClick={() => tracks[0] && playTrack(tracks[0], tracks)}><Play size={14} />ทดลองฟัง</button></div>
       <Link className="nav-link" href="/admin"><ListMusic size={18} />จัดการเพลง</Link>
@@ -61,6 +61,8 @@ export default function Home() {
     <footer className="player"><Link href="/player" className="now-playing" aria-label="เปิดหน้าเพลงที่กำลังเล่น">{currentTrack ? <div className={`mini-cover ${currentTrack.coverUrl ? '' : 'no-cover'}`}>{currentTrack.coverUrl ? <img src={currentTrack.coverUrl} alt="" /> : "♪"}</div> : <div className="mini-cover">♪</div>}<div><strong>{currentTrack?.title ?? 'ยังไม่มีเพลงที่เล่น'}</strong><span>{currentTrack?.artist ?? 'เลือกเพลงเพื่อเริ่มฟัง'}</span></div><button type="button" className={currentTrack && likedIds.includes(currentTrack.id) ? 'liked' : ''} aria-label="เพลงที่ชอบ" onClick={() => currentTrack && toggleLike(currentTrack.id)}><Heart size={16} fill={currentTrack && likedIds.includes(currentTrack.id) ? 'currentColor' : 'none'} /></button></Link><div className="player-controls"><div className="control-row"><button type="button" aria-label="สุ่มเพลง" className={isShuffle ? 'active-control' : ''} onClick={toggleShuffle}><Shuffle size={16} /></button><button type="button" aria-label="เพลงก่อนหน้า" onClick={previous} disabled={!currentTrack}><SkipBack size={18} /></button><button type="button" className="play-button" aria-label={isPlaying ? 'หยุดชั่วคราว' : 'เล่นเพลง'} onClick={togglePlay} disabled={!currentTrack}>{isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}</button><button type="button" aria-label="เพลงถัดไป" onClick={next} disabled={!currentTrack}><SkipForward size={18} /></button><button type="button" aria-label="วนซ้ำ" className={repeatMode !== 'off' ? 'active-control' : ''} onClick={cycleRepeat}><Repeat size={16} /></button></div><div className="progress"><span>{formatTime(currentTime)}</span><input className="progress-range" type="range" min="0" max={duration || 0.1} step="0.1" value={Math.min(currentTime, duration || 0.1)} onChange={(e) => seek(Number(e.target.value))} style={{ '--progress': `${progress}%` } as React.CSSProperties} aria-label="ตำแหน่งเพลง" /><span>{formatTime(duration)}</span></div></div><div className="volume"><Volume2 size={16} /><input className="volume-range" type="range" min="0" max="1" step="0.01" value={volume} onChange={(e) => setVolume(Number(e.target.value))} aria-label="ระดับเสียง" /><button type="button" className="queue-open" onClick={() => setQueueOpen(true)} aria-label="เปิดคิวเพลง" title="เปิดคิวเพลง"><MoreHorizontal size={18} /></button></div></footer>
   </div>;
 }
+
+
 
 
 
