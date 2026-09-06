@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Heart, Home as HomeIcon, Library, ListMusic, MoreHorizontal, Pause, Play, Repeat, Search, Shuffle, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 import type { Track } from '../lib/player-store';
 import { usePlayerStore } from '../lib/player-store';
-import { AudioEngine } from '../components/audio-player';
 
 const demoUrl = 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3';
 const tracks: Track[] = [
@@ -40,7 +39,6 @@ export default function Home() {
   const progress = useMemo(() => duration > 0 ? (currentTime / duration) * 100 : 0, [currentTime, duration]);
 
   return <div className="app-shell">
-    <AudioEngine />
     <aside className="sidebar">
       <div className="brand"><span className="brand-mark">♪</span><span>MySpotify</span></div>
       <nav className="nav-group">
